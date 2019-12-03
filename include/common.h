@@ -1,0 +1,10 @@
+extern bool CascadeRunning;
+extern double CubeHeight;
+extern bool rotright;
+extern bool interrupted;
+extern double holdTarget;
+extern int armGoing;
+extern double currentX;
+extern double currentY;
+extern double currentA;
+extern bool StackerRunning;
