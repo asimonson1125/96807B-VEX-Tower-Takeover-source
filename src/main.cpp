@@ -33,7 +33,10 @@ int armAllOutReleased = 1300;
 bool IntakeAuto  = false;
 bool rotright = true;
 bool Bcooldown = true;
-int aselection; //auton selector
+
+int aselection = -1; //auton selector
+double maxHeightPrior = 0;
+
 int sped = 100; //speed of arm motor in percent.
 int armGoing = -1000;
 bool StackerRunning = false;
@@ -88,6 +91,25 @@ void pre_auton(void) {
   RightQuad.setRotation(0, rev);
   ArmMotor.setVelocity(sped, pct);
   ArmMotor.setBrake(hold);
+  while(aselection == -1){
+    if(LiftMotor.rotation(rev)>maxHeightPrior){
+      maxHeightPrior = LiftMotor.rotation(rev);
+    }
+    if(maxHeightPrior>.5 && LiftMotor.rotation(rev)<.1){
+      Brain.Screen.printAt(200,0,"you have reached %f",LiftMotor.rotation(rev));
+      aselection = (int)(maxHeightPrior * 2);
+      Brain.Screen.printAt(200,100,"and have selected auton number %d",aselection);
+      switch(aselection){
+        case 0: Brain.Screen.printAt(200, 200, "none");
+        case 1: Brain.Screen.printAt(200, 200,"Red Run");
+        case 2: Brain.Screen.printAt(200, 200,"Blue Run");
+        case 3: Brain.Screen.printAt(200, 200,"Red 4");
+        case 4: Brain.Screen.printAt(200, 200,"Blue 4");
+      }
+    }
+    Brain.Screen.printAt(100, 150, "%f",LiftMotor.rotation(rev));
+    this_thread::sleep_for(50);
+  }
   
   
 
@@ -106,19 +128,19 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  if(aselection == 0){
+  if(aselection == 1){
     //red line snorting
     Redrun();
   }
-  else if(aselection == 1){
+  else if(aselection == 2){
     //blue line snorting
     Bluerun();
   }
-  else if(aselection == 2){
+  else if(aselection == 3){
     //red stack getting
     Red4();
   }
-  else if(aselection == 3){
+  else if(aselection == 4){
     //blue stack getting
     Blue4();
   }
