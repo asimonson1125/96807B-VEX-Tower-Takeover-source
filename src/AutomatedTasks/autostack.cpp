@@ -22,7 +22,7 @@ void alwaysStack(){
       holdTarget = 0;
       interrupted = false;
       thread(cascadeHold).detach();
-      while(LiftMotor.position(rev)>.1){
+      while(LiftMotor.position(rev)>.1 ||!Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){
         this_thread::sleep_for(20);
       }
       interrupted = true;
