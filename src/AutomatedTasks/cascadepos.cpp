@@ -40,7 +40,7 @@ void cascadepos() {
       LiftTarget = -1.0;
     }
     //P loop
-    if(LiftTarget >= -1.0){
+    if(LiftTarget > -1.0){
       CascadeRunning = true;
       while(!Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){ //go until stopped with the X button or joystick interrupt
         error = LiftTarget - LiftMotor.position(turns);
@@ -70,7 +70,7 @@ void cascadeHold(){
   double kd = 0;
   double lastError = 0;
   CascadeRunning = true;
-   while(!interrupted){
+   while(!interrupted || !Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){
      error = holdTarget - LiftMotor.position(turns);
      derivative = error - lastError;
      integral += error;
