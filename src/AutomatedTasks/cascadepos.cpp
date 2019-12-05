@@ -42,7 +42,7 @@ void cascadepos() {
     //P loop
     if(LiftTarget > -1.0){
       CascadeRunning = true;
-      while(!Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){ //go until stopped with the X button or joystick interrupt
+      while(!Controller1.ButtonX.pressing() && Controller1.Axis2.value() > -15 && Controller1.Axis2.value() < 15){ //go until stopped with the X button or joystick interrupt
         error = LiftTarget - LiftMotor.position(turns);
         derivative = error - lastError;
         integral += error;
@@ -59,9 +59,7 @@ void cascadepos() {
         this_thread::sleep_for(100);
       }
       //thread(alwaysStack).interrupt();
-      // OR t2.interrupt();
-      //If above doesn't work add the while interrupt conditions back in, they were stupid wrong last time.
-      //Try to get this running first for consistent termination
+      t2.interrupt();
       interrupted = true;
     }
     if(LiftTarget == -2.0){
