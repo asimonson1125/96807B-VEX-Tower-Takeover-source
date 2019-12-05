@@ -10,7 +10,7 @@ using namespace vex;
 void cascadeHold();
 
 void alwaysStack(){
-  while(!Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){
+  while(true){
     holdTarget = 1.5;
     interrupted = false;
     thread(cascadeHold).detach();
@@ -22,7 +22,7 @@ void alwaysStack(){
       holdTarget = 0;
       interrupted = false;
       thread(cascadeHold).detach();
-      while(LiftMotor.position(rev)>.1 ||!Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){
+      while(LiftMotor.position(rev)>.1){
         this_thread::sleep_for(20);
       }
       interrupted = true;

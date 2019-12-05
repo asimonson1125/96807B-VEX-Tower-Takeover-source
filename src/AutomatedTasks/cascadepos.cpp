@@ -51,12 +51,23 @@ void cascadepos() {
       }
       LiftMotor.stop();
       CascadeRunning = false;
+      interrupted = false;
     }
     if(LiftTarget == -2.0){
-      thread(alwaysStack).detach();
-      while(StackerRunning){
+      thread t2(alwaysStack);
+      while(!Controller1.ButtonX.pressing() && Controller1.Axis2.value() > -15 && Controller1.Axis2.value() < 15){
         this_thread::sleep_for(100);
       }
+      //thread(alwaysStack).interrupt();
+      // OR t2.interrupt();
+      //If above doesn't work add the while interrupt conditions back in, they were stupid wrong last time.
+      //Try to get this running first for consistent termination
+      interrupted = true;
+    }
+    if(LiftTarget == -2.0){
+      this_thread::sleep_for(20);
+      CascadeRunning = false;
+      interrupted = false;
     }
   }
 }
@@ -70,7 +81,7 @@ void cascadeHold(){
   double kd = 0;
   double lastError = 0;
   CascadeRunning = true;
-   while(!interrupted || !Controller1.ButtonX.pressing() || Controller1.Axis2.value() < -15 || Controller1.Axis2.value() > 15){
+   while(!interrupted){
      error = holdTarget - LiftMotor.position(turns);
      derivative = error - lastError;
      integral += error;

@@ -16,7 +16,7 @@ void Red4(){
 
   //rotate arm out and open passive
   //drivestraight(inchesToDeg(32.8));
-  task::sleep(80);
+  this_thread::sleep_for(80);
   //close passive and rotate arm back in
 
   //rotate 90+45 degrees to point at last cube and goal zone
@@ -25,10 +25,10 @@ void Red4(){
   holdTarget = 0;
   thread(cascadeHold).detach();
   while(LiftMotor.position(deg) > 25){
-    task::sleep(20);
+    this_thread::sleep_for(20);
   }
   interrupted = true;
-  task::sleep(20);
+  this_thread::sleep_for(20);
   interrupted = false;
   //rotate arm out and place cubes
   //drivestraight(inchesToDeg(-10));
