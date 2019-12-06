@@ -15,6 +15,8 @@
 
 using namespace vex;
 
+#include "ButtonClass.h"
+
 // A global instance of competition
 competition Competition;
 
