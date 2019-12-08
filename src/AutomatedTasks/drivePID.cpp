@@ -121,7 +121,7 @@ void testSCurve(){
 
 
 
-/*void drivestraight(int target) {
+void drivestraight(int target) {
   target *= 360;
   double kp = .4;
   double error = 0;
@@ -157,5 +157,5 @@ void testSCurve(){
 
 void driveturn(int ToAngle){
   //egg
-}*/
+}
 

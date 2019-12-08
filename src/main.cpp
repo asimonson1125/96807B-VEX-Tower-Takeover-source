@@ -39,6 +39,9 @@ double maxHeightPrior = 0;
 
 int sped = 100; //speed of arm motor in percent.
 int armGoing = -1000;
+int armout = 160;
+int armrelease = 240;
+int armin = 0;
 bool StackerRunning = false;
 
 

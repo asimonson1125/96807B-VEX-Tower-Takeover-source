@@ -7,17 +7,24 @@ using namespace vex;
 
 double inchesToDeg(double inches);
 void alwaysStack();
-void drivestraight(int target); //in degrees
+void drivestraight(int target); //in motor degrees
+void driveturn(int ToAngle); //in net rotation degrees
 void cascadeHold();
 
 
 void Redrun(){
   thread(alwaysStack).detach();
-  //drivestraight(inchesToDeg(32.8));
+  this_thread::sleep_for(500); //pause to allow flipout
+  drivestraight(inchesToDeg(32.8));
   //you now have intaked 4 cubes
-
-  //rotate 45+90 deg towards goal zone
-  //begin rotating arm out and drive toward the goal zone
-  //release cubes
-  //drive back
+  this_thread::sleep_for(100);
+  ArmMotor.spinToPosition(armout, deg, false);
+  drivestraight(inchesToDeg(-28));
+  driveturn(100);
+  drivestraight(inchesToDeg(10));
+  LiftMotor.spinTo(0, rev, 50, velocityUnits::pct, true);
+  ArmMotor.spinTo(armrelease, deg);
+  this_thread::sleep_for(100);
+  drivestraight(inchesToDeg(-30));
+  driveturn(-100);
 }
