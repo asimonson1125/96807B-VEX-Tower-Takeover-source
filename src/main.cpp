@@ -36,8 +36,9 @@ bool IntakeAuto  = false;
 bool rotright = true;
 bool Bcooldown = true;
 
+
 int aselection = -1; //auton selector
-double maxHeightPrior = 0;
+bool unconfirmed = true;
 
 int sped = 100; //speed of arm motor in percent.
 int armGoing = -1000;
@@ -93,25 +94,92 @@ void pre_auton(void) {
   RightQuad.setRotation(0, rev);
   ArmMotor.setVelocity(sped, pct);
   ArmMotor.setBrake(hold);
-  while(aselection == -1){
-    if(LiftMotor.rotation(rev)>maxHeightPrior){
-      maxHeightPrior = LiftMotor.rotation(rev);
-    }
-    if(maxHeightPrior>.5 && LiftMotor.rotation(rev)<.1){
-      Brain.Screen.printAt(200,0,"you have reached %f",LiftMotor.rotation(rev));
-      aselection = (int)(maxHeightPrior * 2);
-      Brain.Screen.printAt(200,100,"and have selected auton number %d",aselection);
-      switch(aselection){
-        case 0: Brain.Screen.printAt(200, 200, "none");
-        case 1: Brain.Screen.printAt(200, 200,"Red Run");
-        case 2: Brain.Screen.printAt(200, 200,"Blue Run");
-        case 3: Brain.Screen.printAt(200, 200,"Red 4");
-        case 4: Brain.Screen.printAt(200, 200,"Blue 4");
+
+
+  Brain.Screen.clearScreen("black");
+  lcdButton red(150, 30, 40, 280, "RED", color(70,70,70));
+  lcdButton blue(250, 30, 40, 280, "BLUE", color(70,70,70));
+
+  lcdButton confirm(300,150,60,100, "CONFIRM",color(33,255,66));
+  lcdButton none(100,80,40,120, "None", color(70,70,70));
+
+  int xplace = 100;
+
+  lcdButton redrun(xplace,120,50,120, "RedRun", color(255, 33, 33));
+  lcdButton red4(xplace,160,50,120, "Red4", color(255, 33, 33));
+  lcdButton bluerun(xplace,120,50,120, "BlueRun", color(51, 51, 255));
+  lcdButton blue4(xplace,160,50,120, "Blue4", color(51, 51, 255));
+  int ColorChosen = 0;
+
+  //use coordinate presser for exact spacing
+
+  while(unconfirmed){
+    if(Brain.Screen.pressing()){
+      if(red.pressing()){
+        ColorChosen = 1;
+        Brain.Screen.clearScreen("black");
+        redrun.xPos = xplace;
+        red4.xPos = xplace;
+        bluerun.xPos = 1000;
+        blue4.xPos = 10000;
+        red.draw();
+        blue.draw();
+        confirm.draw();
+        none.draw();
+        redrun.draw();
+        red4.draw();
+      }
+      else if (blue.pressing()){
+        ColorChosen = 2;
+        Brain.Screen.clearScreen("black");
+        redrun.xPos = 1000;
+        red4.xPos = 1000;
+        bluerun.xPos = xplace;
+        blue4.xPos = xplace;
+        red.draw();
+        blue.draw();
+        confirm.draw();
+        none.draw();
+        bluerun.draw();
+        blue4.draw();
+      }
+      else if (ColorChosen == 1){
+        if(redrun.pressing()){
+          aselection = 1;
+        }
+        else if (red4.pressing()){
+          aselection = 3;
+        }
+      }
+      else if (ColorChosen == 2){
+        if(bluerun.pressing()){
+          aselection = 2;
+        }
+        else if (blue4.pressing()){
+          aselection = 4;
+        }
+      }
+      if (none.pressing()){
+        aselection = 0;
       }
     }
-    Brain.Screen.printAt(100, 150, "%f",LiftMotor.rotation(rev));
+
+
+    if(aselection >-1){  
+      switch(aselection){
+        case 0: Brain.Screen.printAt(200, 200, "none");
+        case 1: Brain.Screen.printAt(200, 200, "Red Run");
+        case 2: Brain.Screen.printAt(200, 200, "Blue Run");
+        case 3: Brain.Screen.printAt(200, 200, "Red 4");
+        case 4: Brain.Screen.printAt(200, 200, "Blue 4");
+      }
+      if(confirm.pressing()){
+        unconfirmed = false;
+      }
+    }
     this_thread::sleep_for(50);
   }
+  Brain.Screen.clearScreen();
   
   
 
