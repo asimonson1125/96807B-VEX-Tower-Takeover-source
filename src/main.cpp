@@ -15,6 +15,8 @@
 
 using namespace vex;
 
+#include "ButtonClass.h"
+
 // A global instance of competition
 competition Competition;
 
@@ -34,8 +36,9 @@ bool IntakeAuto  = false;
 bool rotright = true;
 bool Bcooldown = true;
 
+
 int aselection = -1; //auton selector
-double maxHeightPrior = 0;
+bool unconfirmed = true;
 
 int sped = 100; //speed of arm motor in percent.
 int armGoing = -1000;
@@ -84,35 +87,119 @@ void BButtonCooldown (){
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
+int xplace = 70;
+int ColorChosen = 0;
+
+lcdButton redButton(95, 30, 150, 40, "RED", color(70,70,70));
+lcdButton blueButton(480-95, 30, 150, 40, "BLUE", color(70,70,70));
+
+lcdButton confirm(300,150,100,60, "CONFIRM",color(33,255,66));
+lcdButton none(xplace,90,120,40, "None", color(70,70,70));
+
+lcdButton redrun(1000,135,120,40, "RedRun");//, color(255, 33, 33));
+lcdButton red4(1000,180,120,40, "Red4");//, color(255, 33, 33));
+lcdButton bluerun(1000,135,120,40, "BlueRun", 16777215); //figure out color scheme
+lcdButton blue4(1000,180,120,40, "Blue4", color(51, 51, 255));
+
+
+void drawTonomous(){
+  Brain.Screen.clearScreen("black");
+  redButton.draw();
+  blueButton.draw();
+  confirm.draw();
+  none.draw();
+  redrun.draw();
+  red4.draw();
+  bluerun.draw();
+  blue4.draw();
+
+}
+
 
 void pre_auton(void) {
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-  LiftMotor.setRotation(0, rev);
-  ArmMotor.setRotation(0, rev);
-  LeftQuad.setRotation(0, rev);
-  RightQuad.setRotation(0, rev);
-  ArmMotor.setVelocity(sped, pct);
-  ArmMotor.setBrake(hold);
-  while(aselection == -1){
-    if(LiftMotor.rotation(rev)>maxHeightPrior){
-      maxHeightPrior = LiftMotor.rotation(rev);
-    }
-    if(maxHeightPrior>.5 && LiftMotor.rotation(rev)<.1){
-      Brain.Screen.printAt(200,0,"you have reached %f",LiftMotor.rotation(rev));
-      aselection = (int)(maxHeightPrior * 2);
-      Brain.Screen.printAt(200,100,"and have selected auton number %d",aselection);
-      switch(aselection){
-        case 0: Brain.Screen.printAt(200, 200, "none");
-        case 1: Brain.Screen.printAt(200, 200,"Red Run");
-        case 2: Brain.Screen.printAt(200, 200,"Blue Run");
-        case 3: Brain.Screen.printAt(200, 200,"Red 4");
-        case 4: Brain.Screen.printAt(200, 200,"Blue 4");
+  int aselection = -1;
+  bool unconfirmed = true;
+
+  Brain.Screen.clearScreen("black");
+  drawTonomous();
+
+  //use coordinate presser for exact spacing
+
+  while(unconfirmed){
+    if(Brain.Screen.pressing()){
+      if(redButton.pressing()){
+        ColorChosen = 1;
+        redrun.moveTo(xplace,redrun.yPos);
+        red4.moveTo(xplace,red4.yPos);
+        bluerun.moveTo(1000,bluerun.yPos);
+        blue4.moveTo(1000,blue4.yPos);
+        drawTonomous();
+      }
+      else if (blueButton.pressing()){
+        ColorChosen = 2;
+        redrun.moveTo(1000,redrun.yPos);
+        red4.moveTo(1000,red4.yPos);
+        bluerun.moveTo(xplace,bluerun.yPos);
+        blue4.moveTo(xplace,blue4.yPos);
+        drawTonomous();
+      }
+      else if (ColorChosen == 1){
+        if(redrun.pressing()){
+          aselection = 1;
+          drawTonomous();
+        }
+        else if (red4.pressing()){
+          aselection = 3;
+          drawTonomous();
+        }
+      }
+      else if (ColorChosen == 2){
+        if(bluerun.pressing()){
+          aselection = 2;
+          drawTonomous();
+        }
+        else if (blue4.pressing()){
+          aselection = 4;
+          drawTonomous();
+        }
+      }
+      if (none.pressing()){
+        aselection = 0;
+        drawTonomous();
       }
     }
-    Brain.Screen.printAt(100, 150, "%f",LiftMotor.rotation(rev));
+
+
+    if(aselection >-1){  
+      switch(aselection){
+        case 0: Brain.Screen.printAt(200, 200, "none");
+          break;
+        case 1: Brain.Screen.printAt(200, 200, "Red Run");
+          break;
+        case 2: Brain.Screen.printAt(200, 200, "Blue Run");
+         break;
+        case 3: Brain.Screen.printAt(200, 200, "Red 4");
+         break;
+        case 4: Brain.Screen.printAt(200, 200, "Blue 4");
+          break;
+      }
+      if(confirm.pressing()){
+        unconfirmed = false;
+      }
+    }
     this_thread::sleep_for(50);
   }
+
+  //get the buttons out of the way
+  redButton.moveTo(1000, 0);
+  blueButton.moveTo(1000, 0);
+  confirm.moveTo(1000, 0);
+  none.moveTo(1000, 0);
+  redrun.moveTo(1000, 0);
+  red4.moveTo(1000, 0);
+  bluerun.moveTo(1000, 0);
+  blue4.moveTo(1000, 0);
+  Brain.Screen.clearScreen();
   
   
 
