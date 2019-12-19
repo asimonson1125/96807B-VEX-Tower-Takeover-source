@@ -12,6 +12,7 @@ double LiftTarget;
 
 void alwaysStack();
 
+
 void cascadepos() {
   double kp = 500;
   double error = 0;
@@ -47,9 +48,11 @@ void cascadepos() {
         derivative = error - lastError;
         integral += error;
         LiftMotor.spin(forward, (error * kp)+ (integral * ki) + (derivative * kd), pct);
+        LiftMotor2.spin(forward, (error * kp)+ (integral * ki) + (derivative * kd), pct);
         this_thread::sleep_for(20);
       }
       LiftMotor.stop();
+      LiftMotor2.stop();
       CascadeRunning = false;
       interrupted = false;
     }
@@ -84,8 +87,10 @@ void cascadeHold(){
      derivative = error - lastError;
      integral += error;
      LiftMotor.spin(forward, (error * kp)+ (integral * ki) + (derivative * kd), pct);
+     LiftMotor2.spin(forward, (error * kp)+ (integral * ki) + (derivative * kd), pct);
      this_thread::sleep_for(20);
    }
    LiftMotor.stop();
+   LiftMotor2.stop();
    CascadeRunning = false;
 }

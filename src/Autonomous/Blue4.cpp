@@ -11,7 +11,7 @@ void drivestraight(int target); //in degrees
 void cascadeHold();
 
 
-void Blue4(){
+void BlueTower(){
   thread(alwaysStack).detach();
 
   //rotate arm out and open passive

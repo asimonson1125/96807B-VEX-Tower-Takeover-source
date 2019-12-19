@@ -19,6 +19,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
+motor_group LiftMotors(LiftMotor,LiftMotor2);
 
 
 //main.cpp variables and functions
@@ -68,8 +69,8 @@ void testSCurve();
 //autonomous functions (in corresponding files)
 void Redrun();
 void Bluerun();
-void Red4();
-void Blue4();
+void RedTower();
+void BlueTower();
 
 void BButtonCooldown (){
   Bcooldown = false;
@@ -88,22 +89,25 @@ void BButtonCooldown (){
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 int xplace = 70;
-int ColorChosen = 0;
+int ColorChosen = 1;
 
-lcdButton redButton(95, 30, 150, 40, "RED", color(70,70,70));
-lcdButton blueButton(480-95, 30, 150, 40, "BLUE", color(70,70,70));
+lcdButton redButton(120, 22, 230, 35, "RED", "#252525","#FF2525",2);
+lcdButton blueButton(480-120, 22, 230, 35, "BLUE", "#252525", "#2525FF", 2);
 
-lcdButton confirm(300,150,100,60, "CONFIRM",color(33,255,66));
-lcdButton none(xplace,90,120,40, "None", color(70,70,70));
+lcdButton confirm(300,150,100,60, "CONFIRM","#14c40e", "#0f990b", 4);
+lcdButton none(xplace,90,120,40, "None", "#252525");
 
-lcdButton redrun(1000,135,120,40, "RedRun");//, color(255, 33, 33));
-lcdButton red4(1000,180,120,40, "Red4");//, color(255, 33, 33));
-lcdButton bluerun(1000,135,120,40, "BlueRun", 16777215); //figure out color scheme
-lcdButton blue4(1000,180,120,40, "Blue4", color(51, 51, 255));
+lcdButton redrun(xplace,135,120,40, "Red Run", "#FF2525", "#FFFFFF", 2);//, color(255, 33, 33));
+lcdButton red4(xplace,180,120,40, "Red Tower", "#FF2525", "#FFFFFF", 2);//, color(255, 33, 33));
+lcdButton bluerun(1000,135,120,40, "Blue Run", "#2525FF", "#FFFFFF", 2); //figure out color scheme
+lcdButton blue4(1000,180,120,40, "Blue Tower", "#2525FF", "#FFFFFF", 2);
 
 
 void drawTonomous(){
   Brain.Screen.clearScreen("black");
+  Brain.Screen.setPenColor(white);
+  Brain.Screen.setPenWidth(2);
+  Brain.Screen.drawLine(0,60,500,60);
   redButton.draw();
   blueButton.draw();
   confirm.draw();
@@ -112,7 +116,6 @@ void drawTonomous(){
   red4.draw();
   bluerun.draw();
   blue4.draw();
-
 }
 
 
@@ -121,6 +124,7 @@ void pre_auton(void) {
   bool unconfirmed = true;
 
   Brain.Screen.clearScreen("black");
+  confirm.setPenColor("#0f990b");
   drawTonomous();
 
   //use coordinate presser for exact spacing
@@ -178,33 +182,30 @@ void pre_auton(void) {
           break;
         case 2: Brain.Screen.printAt(200, 200, "Blue Run");
          break;
-        case 3: Brain.Screen.printAt(200, 200, "Red 4");
+        case 3: Brain.Screen.printAt(200, 200, "Red Tower");
          break;
-        case 4: Brain.Screen.printAt(200, 200, "Blue 4");
+        case 4: Brain.Screen.printAt(200, 200, "Blue Tower");
           break;
       }
       if(confirm.pressing()){
         unconfirmed = false;
       }
     }
+    else{
+      if(confirm.pressing()){
+        Brain.Screen.printAt(150, 220, "Please select an option");
+      }
+    }
     this_thread::sleep_for(50);
   }
-
-  //get the buttons out of the way
-  redButton.moveTo(1000, 0);
-  blueButton.moveTo(1000, 0);
-  confirm.moveTo(1000, 0);
-  none.moveTo(1000, 0);
-  redrun.moveTo(1000, 0);
-  red4.moveTo(1000, 0);
-  bluerun.moveTo(1000, 0);
-  blue4.moveTo(1000, 0);
   Brain.Screen.clearScreen();
   
   
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
+  
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -228,11 +229,11 @@ void autonomous(void) {
   }
   else if(aselection == 3){
     //red stack getting
-    Red4();
+    RedTower();
   }
   else if(aselection == 4){
     //blue stack getting
-    Blue4();
+    BlueTower();
   }
   // ..........................................................................
   // Insert autonomous user code here.
@@ -276,9 +277,9 @@ void usercontrol(void) {
 
 
     // Lift Control
-    // Set the other joystick's y axis to control the velocity value of the cascade lift's motor(s?)
+    // Set the other joystick's y axis to control the velocity value of the cascade lift's motors
     if(CascadeRunning == false){
-      LiftMotor.spin(forward, (Controller1.Axis2.value()), pct);
+      LiftMotors.spin(forward, (Controller1.Axis2.value()), pct);
     }
 
     // Arm Control

@@ -12,7 +12,7 @@ extern motor RightFrontMotor;
 extern motor LiftMotor;
 extern motor ArmMotor;
 extern motor IntakeMotor;
-extern motor StackerMotor;
+extern motor LiftMotor2;
 extern bumper StackBumper;
 extern pot BarPot;
 extern encoder RightQuad;

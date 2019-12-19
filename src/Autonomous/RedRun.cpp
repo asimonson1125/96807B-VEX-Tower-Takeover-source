@@ -22,7 +22,8 @@ void Redrun(){
   drivestraight(inchesToDeg(-28));
   driveturn(100);
   drivestraight(inchesToDeg(10));
-  LiftMotor.spinTo(0, rev, 50, velocityUnits::pct, true);
+  LiftMotor.spinTo(0, rev, 50, velocityUnits::pct, false);
+  LiftMotor2.spinTo(0, rev, 50, velocityUnits::pct, true);
   ArmMotor.spinTo(armrelease, deg);
   this_thread::sleep_for(100);
   drivestraight(inchesToDeg(-30));
