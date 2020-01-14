@@ -6,6 +6,14 @@ using namespace vex;
 #include "common.h"
 
 
+
+//_________________________________________________________
+//_________________________________________________________
+//--------- The following is for TRACKING WHEELS ----------
+//----------- SCROLL for inertial equivalent ---------------
+//_________________________________________________________
+//_________________________________________________________
+
 //includes drivestraight and driveturn plus conversions
 
 double inchesToDeg(double inches){
@@ -159,3 +167,18 @@ void driveturn(int ToAngle){
   //egg
 }
 
+
+//_________________________________________________________
+//_________________________________________________________
+//--------- The following is for INERTIAL SENSOR ----------
+//-------------- NOT for tracking wheels ------------------
+//_________________________________________________________
+//_________________________________________________________
+
+void inertialstraight(double distanceInInches){
+  //egg
+}
+
+void inertialturn(double ToAngle){
+  //egg
+}
